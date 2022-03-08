@@ -21,6 +21,7 @@ const Home = ({ user, logout }) => {
 
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
+  const [refreshConversation, setRefreshConversation] = useState(false)
 
   const classes = useStyles();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -88,6 +89,7 @@ const Home = ({ user, logout }) => {
         }
       });
       setConversations(conversations);
+      setRefreshConversation(true)
     },
     [setConversations, conversations]
   );
@@ -110,8 +112,9 @@ const Home = ({ user, logout }) => {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
         }
-      });    
-      setConversations(conversations); 
+      });
+      setConversations(conversations);
+      setRefreshConversation(true);
     },
     [setConversations, conversations]
   );
@@ -188,9 +191,10 @@ const Home = ({ user, logout }) => {
       }
     };
     if (!user.isFetching) {
+      setRefreshConversation(false)
       fetchConversations();
     }
-  }, [user]);
+  }, [user, refreshConversation]);
 
   const handleLogout = async () => {
     if (user && user.id) {
