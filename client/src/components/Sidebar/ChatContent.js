@@ -25,8 +25,8 @@ const ChatContent = ({ conversation }) => {
   const { otherUser, messages} = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
 
-  const newMessages = useMemo(() => 
-    messages.filter((message) => message.readStatus === false).length, [messages]
+  const newMessages = useMemo(() =>
+    messages.filter((message) => message.readStatus === false && otherUser.id !== message.senderId).length, [messages, otherUser.id]
   )
 
   const classes = useStyles(newMessages);
@@ -42,7 +42,7 @@ const ChatContent = ({ conversation }) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {newMessages}
+      {newMessages > 0 ? newMessages : null}
     </Box>
   );
 };
