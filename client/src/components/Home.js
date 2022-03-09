@@ -21,7 +21,6 @@ const Home = ({ user, logout }) => {
 
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
-  const [refreshConversation, setRefreshConversation] = useState(false)
 
   const classes = useStyles();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -81,15 +80,15 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      conversations.forEach((convo) => {
+      let newConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
           convo.id = message.conversationId;
         }
+        return convo
       });
-      setConversations(conversations);
-      setRefreshConversation(true)
+      setConversations(newConversations);
     },
     [setConversations, conversations]
   );
@@ -107,14 +106,14 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
-      conversations.forEach((convo) => {
+      let newConversations = conversations.map((convo) => {
         if (convo.id === message.conversationId) {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
         }
+        return convo
       });
-      setConversations(conversations);
-      setRefreshConversation(true);
+      setConversations(newConversations)
     },
     [setConversations, conversations]
   );
@@ -192,10 +191,9 @@ const Home = ({ user, logout }) => {
       }
     };
     if (!user.isFetching) {
-      setRefreshConversation(false)
       fetchConversations();
     }
-  }, [user, refreshConversation]);
+  }, [user]);
 
   const handleLogout = async () => {
     if (user && user.id) {
