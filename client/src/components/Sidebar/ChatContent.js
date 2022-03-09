@@ -19,6 +19,16 @@ const useStyles = makeStyles((theme) => ({
     color: (newMessages) => newMessages > 0 ? "#000000" : "#9CADC8",
     letterSpacing: -0.17,
   },
+  newMessages: {
+    fontSize: 14,
+    color: "#FFFFFF",
+    backgroundColor: "#3F92FF",
+    borderRadius: "1rem",
+    textAlign: "center",
+    padding: "0 0.5em",
+    margin: "auto 0",
+    fontWeight: 600
+  }
 }));
 
 const ChatContent = ({ conversation }) => {
@@ -26,7 +36,7 @@ const ChatContent = ({ conversation }) => {
   const latestMessageText = conversation.id && conversation.latestMessageText;
 
   const newMessages = useMemo(() =>
-    messages.filter((message) => message.readStatus === false && otherUser.id !== message.senderId).length, [messages, otherUser.id]
+    messages.filter((message) => message.readStatus === false && otherUser.id === message.senderId).length, [messages, otherUser.id]
   )
 
   const classes = useStyles(newMessages);
@@ -42,7 +52,9 @@ const ChatContent = ({ conversation }) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {newMessages > 0 ? newMessages : null}
+      <Typography className={classes.newMessages} >
+        {newMessages > 0 ? newMessages : null}
+      </Typography>
     </Box>
   );
 };
