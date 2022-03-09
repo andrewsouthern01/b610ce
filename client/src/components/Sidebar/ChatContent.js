@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -15,16 +15,22 @@ const useStyles = makeStyles((theme) => ({
   },
   previewText: {
     fontSize: 12,
-    color: "#9CADC8",
+    fontWeight: (newMessages) => newMessages > 0 ? 600 : 400,
+    color: (newMessages) => newMessages > 0 ? "#000000" : "#9CADC8",
     letterSpacing: -0.17,
   },
 }));
 
 const ChatContent = ({ conversation }) => {
-  const classes = useStyles();
-
-  const { otherUser } = conversation;
+  const { otherUser, messages} = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
+
+  const newMessages = useMemo(() => 
+    messages.filter((message) => message.readStatus === false).length, [messages]
+  )
+
+  const classes = useStyles(newMessages);
+
 
   return (
     <Box className={classes.root}>
@@ -36,6 +42,7 @@ const ChatContent = ({ conversation }) => {
           {latestMessageText}
         </Typography>
       </Box>
+      {newMessages}
     </Box>
   );
 };
