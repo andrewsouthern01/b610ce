@@ -35,12 +35,14 @@ const ChatContent = ({ conversation }) => {
   const { otherUser, messages} = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
 
-  const newMessages = useMemo(() =>
-    messages.filter((message) => message.readStatus === false && otherUser.id === message.senderId).length, [messages, otherUser.id]
+  const newMessages = useMemo(() => 
+    messages.filter(
+        (message) => message.readStatus === false && otherUser.id === message.senderId
+      ).length, 
+    [messages, otherUser.id]
   )
 
   const classes = useStyles(newMessages);
-
 
   return (
     <Box className={classes.root}>
@@ -53,7 +55,7 @@ const ChatContent = ({ conversation }) => {
         </Typography>
       </Box>
       <Typography className={classes.newMessages} >
-        {newMessages > 0 ? newMessages : null}
+        {newMessages > 0 ? (newMessages < 99 ? newMessages : "99+" ) : null}
       </Typography>
     </Box>
   );
