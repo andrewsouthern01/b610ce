@@ -33,7 +33,7 @@ describe("Feature: Read status for messages", () => {
     cy.contains("Third message");
     cy.logout()
   });
-  it('displays messages as read', () => {
+  it('displays number of new messages', () => {
     cy.login(julie.username, julie.password)
     cy.contains(3)
     cy.contains("John").click();
