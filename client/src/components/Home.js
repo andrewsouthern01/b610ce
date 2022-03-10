@@ -73,7 +73,6 @@ const Home = ({ user, logout }) => {
     })
   }
   
-
   const postMessage = async(body) => {
     try {
       const data = await saveMessage(body);
@@ -165,7 +164,6 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     setActiveConversation(username);
   };
-
 
   const addOnlineUser = useCallback((id) => {
     setConversations((prev) =>
