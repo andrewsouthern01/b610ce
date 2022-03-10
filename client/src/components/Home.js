@@ -80,17 +80,18 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      let newConversations = conversations.map((convo) => {
+      setConversations((prev) => prev.map((convo) => {
         if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-          convo.id = message.conversationId;
+          const convoCopy = {...convo}
+          convoCopy.messages = [...convoCopy.messages, message]
+          convoCopy.latestMessageText = message.text;
+          convoCopy.id = message.conversationId;
+          return convoCopy
         }
         return convo
-      });
-      setConversations(newConversations);
+      }));
     },
-    [setConversations, conversations]
+    [setConversations]
   );
 
   const addMessageToConversation = useCallback(
@@ -104,18 +105,19 @@ const Home = ({ user, logout }) => {
           messages: [message],
         };
         newConvo.latestMessageText = message.text;
-        setConversations((prev) => [newConvo, ...prev]);
+        conversations.unshift(newConvo)
       }
-      let newConversations = conversations.map((convo) => {
+      setConversations((prev) => prev.map((convo) => {
         if (convo.id === message.conversationId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
+          const convoCopy = { ...convo}
+          convoCopy.messages = [...convoCopy.messages, message]
+          convoCopy.latestMessageText = message.text;
+          return convoCopy
         }
         return convo
-      });
-      setConversations(newConversations)
+      }))
     },
-    [setConversations, conversations]
+    [conversations]
   );
 
   const setActiveChat = (username) => {
