@@ -54,6 +54,11 @@ const Home = ({ user, logout }) => {
     return data;
   };
 
+  const updateMessageAsRead = async (body) => {
+    const { data } = await axios.put('/api/messages/read', body)
+    return data;
+  }
+
   const sendMessage = (data, body) => {
     socket.emit('new-message', {
       message: data.message,
@@ -61,6 +66,13 @@ const Home = ({ user, logout }) => {
       sender: data.sender,
     });
   };
+
+  const sendUpdate = (data, body) => {
+    socket.emit('message-read', {
+      message: data.message
+    })
+  }
+  
 
   const postMessage = async(body) => {
     try {
@@ -77,6 +89,17 @@ const Home = ({ user, logout }) => {
       console.error(error);
     }
   };
+
+  const updateMessage = async(body) => {
+    try {
+      const data = await updateMessageAsRead(body)
+      setMessageAsRead(data)
+
+      sendUpdate(data, body)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
@@ -120,9 +143,29 @@ const Home = ({ user, logout }) => {
     [conversations]
   );
 
+  const setMessageAsRead = useCallback((data) => {
+    const { message } = data
+    setConversations((prev) => prev.map((convo) => {
+      if (convo.id === message.conversationId) {
+        const convoCopy = {...convo}
+        convoCopy.messages = [...convoCopy.messages.map((mes) => {
+          if (mes.id === message.id && mes.readStatus === false) {
+            const mesCopy = {...mes}
+            mesCopy.readStatus = message.readStatus
+            return mesCopy
+          }
+          return mes
+        })] 
+        return convoCopy
+      }
+      return convo
+    }))
+  }, [setConversations])
+
   const setActiveChat = (username) => {
     setActiveConversation(username);
   };
+
 
   const addOnlineUser = useCallback((id) => {
     setConversations((prev) =>
@@ -220,6 +263,7 @@ const Home = ({ user, logout }) => {
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          updateMessage={updateMessage}
         />
       </Grid>
     </>
