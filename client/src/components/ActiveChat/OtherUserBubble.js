@@ -39,13 +39,14 @@ const OtherUserBubble = ({ conversationId, messageId, text, readStatus, time, ot
       if (readStatus === false) {
         const body = {
           conversationId,
-          messageId
+          messageId,
+          otherUser: otherUser.id
         }
         await updateMessage(body)
       }
     }
     markAsRead()
-  }, [conversationId, messageId, readStatus, updateMessage])
+  }, [conversationId, messageId, otherUser, readStatus, updateMessage])
   
 
 
