@@ -17,11 +17,12 @@ const Message = db.define("message", {
   }
 });
 
-Message.findMessage = async function(conversationId, messageId) {
+Message.findMessage = async function(conversationId, messageId, otherUser) {
   const message = await Message.findOne({
     where: {
       conversationId,
-      id: messageId
+      id: messageId,
+      senderId: otherUser
     }
   })
   return message
