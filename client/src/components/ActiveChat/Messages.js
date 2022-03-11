@@ -1,21 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Box } from '@material-ui/core';
 import { SenderBubble, OtherUserBubble } from '.';
 import moment from 'moment';
 
 const Messages = (props) => {
-  const {conversationId, messages, otherUser, userId, updateMessage } = props;
-
-  const lastMessageRead = useMemo(() => 
-    {
-      let lastIndex = messages.length - 1
-      while (lastIndex !== -1) {
-        if (messages[lastIndex].readStatus === true) {
-        return messages[lastIndex].id
-        }
-        lastIndex--
-      }
-    }, [messages])
+  const {conversationId, messages, otherUser, userId, updateMessage, lastMessageRead } = props;
 
   return (
     <Box>
