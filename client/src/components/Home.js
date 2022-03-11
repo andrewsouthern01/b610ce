@@ -69,7 +69,7 @@ const Home = ({ user, logout }) => {
 
   const sendUpdate = (data, body) => {
     socket.emit('message-read', {
-      message: data.message
+      message: data.message,
     })
   }
   
@@ -92,6 +92,7 @@ const Home = ({ user, logout }) => {
   const updateMessage = async(body) => {
     try {
       const data = await updateMessageAsRead(body)
+      
       setMessageAsRead(data)
 
       sendUpdate(data, body)
@@ -134,12 +135,15 @@ const Home = ({ user, logout }) => {
           const convoCopy = { ...convo}
           convoCopy.messages = [...convoCopy.messages, message]
           convoCopy.latestMessageText = message.text;
+          if (message.senderId !== user.id) {
+            convoCopy.numberNewMessages++
+          }      
           return convoCopy
         }
         return convo
       }))
     },
-    [conversations]
+    [conversations, user.id]
   );
 
   const setMessageAsRead = useCallback((data) => {
@@ -147,6 +151,10 @@ const Home = ({ user, logout }) => {
     setConversations((prev) => prev.map((convo) => {
       if (convo.id === message.conversationId) {
         const convoCopy = {...convo}
+        convoCopy.numberNewMessages = 0
+        if (message.senderId === user.id) {
+          convoCopy.lastMessageRead = {id: message.id, text: message.text}
+        }   
         convoCopy.messages = [...convoCopy.messages.map((mes) => {
           if (mes.id === message.id && mes.readStatus === false) {
             const mesCopy = {...mes}
@@ -159,7 +167,7 @@ const Home = ({ user, logout }) => {
       }
       return convo
     }))
-  }, [setConversations])
+  }, [user.id])
 
   const setActiveChat = (username) => {
     setActiveConversation(username);
@@ -200,6 +208,7 @@ const Home = ({ user, logout }) => {
     socket.on('add-online-user', addOnlineUser);
     socket.on('remove-offline-user', removeOfflineUser);
     socket.on('new-message', addMessageToConversation);
+    socket.on('message-read', setMessageAsRead)
 
     return () => {
       // before the component is destroyed
@@ -207,8 +216,9 @@ const Home = ({ user, logout }) => {
       socket.off('add-online-user', addOnlineUser);
       socket.off('remove-offline-user', removeOfflineUser);
       socket.off('new-message', addMessageToConversation);
+      socket.off('message-read', setMessageAsRead)
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, setMessageAsRead, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect
