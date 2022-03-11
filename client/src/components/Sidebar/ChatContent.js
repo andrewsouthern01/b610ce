@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: (newMessages) => newMessages > 0 ? 600 : 400,
     color: (newMessages) => newMessages > 0 ? "#000000" : "#9CADC8",
     letterSpacing: -0.17,
+    
   },
   newMessages: {
     fontSize: 14,
@@ -32,17 +33,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ChatContent = ({ conversation }) => {
-  const { otherUser, messages} = conversation;
+  const { otherUser, numberNewMessages } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
 
-  const newMessages = useMemo(() => 
-    messages.filter(
-        (message) => message.readStatus === false && otherUser.id === message.senderId
-      ).length, 
-    [messages, otherUser.id]
-  )
 
-  const classes = useStyles(newMessages);
+  const classes = useStyles(numberNewMessages);
 
   return (
     <Box className={classes.root}>
@@ -51,11 +46,11 @@ const ChatContent = ({ conversation }) => {
           {otherUser.username}
         </Typography>
         <Typography className={classes.previewText}>
-          {latestMessageText}
+          {latestMessageText && latestMessageText.length > 30 ? `${latestMessageText.slice(0, 30)}...` : latestMessageText}
         </Typography>
       </Box>
       <Typography className={classes.newMessages} >
-        {newMessages > 0 ? (newMessages < 99 ? newMessages : "99+" ) : null}
+        {numberNewMessages > 0 ? (numberNewMessages < 99 ? numberNewMessages : "99+" ) : null}
       </Typography>
     </Box>
   );
