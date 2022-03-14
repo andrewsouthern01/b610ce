@@ -36,7 +36,7 @@ const OtherUserBubble = ({ conversationId, messageId, text, readStatus, time, ot
   
   useEffect(() => {
     const markAsRead = async() => {
-      if (readStatus === false) {
+      if (!readStatus) {
         const body = {
           conversationId,
           messageId,

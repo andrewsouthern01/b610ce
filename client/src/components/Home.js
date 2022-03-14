@@ -155,13 +155,13 @@ const Home = ({ user, logout }) => {
         if (message.senderId === user.id) {
           convoCopy.lastMessageRead = {id: message.id, text: message.text}
         }   
-        convoCopy.messages = [...convoCopy.messages.map((mes) => {
-          if (mes.id === message.id && mes.readStatus === false) {
-            const mesCopy = {...mes}
-            mesCopy.readStatus = message.readStatus
-            return mesCopy
+        convoCopy.messages = [...convoCopy.messages.map((msg) => {
+          if (msg.id === message.id && !msg.readStatus) {
+            const messageCopy = {...msg}
+            messageCopy.readStatus = message.readStatus
+            return messageCopy
           }
-          return mes
+          return msg
         })] 
         return convoCopy
       }
