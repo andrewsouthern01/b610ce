@@ -53,7 +53,7 @@ router.put("/read", async(req, res, next) => {
     let conversation = await Conversation.verifyConversationUsers(conversationId, req.user.id, otherUser)
 
     if (!conversation) {
-      return res.sendStatus(401);
+      return res.sendStatus(403);
     }
 
     if (!conversationId || !messageId || !otherUser) {
