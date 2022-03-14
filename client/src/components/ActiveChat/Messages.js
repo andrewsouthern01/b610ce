@@ -4,7 +4,7 @@ import { SenderBubble, OtherUserBubble } from '.';
 import moment from 'moment';
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const {conversationId, messages, otherUser, userId, updateMessage, lastMessageRead } = props;
 
   return (
     <Box>
@@ -12,13 +12,23 @@ const Messages = (props) => {
         const time = moment(message.createdAt).format('h:mm');
 
         return message.senderId === userId ? (
-          <SenderBubble key={message.id} text={message.text} time={time} />
+          <SenderBubble 
+          key={message.id} 
+          text={message.text} 
+          time={time} 
+          otherUser={otherUser} 
+          messageId={message.id} 
+          lastMessageRead={lastMessageRead} />
         ) : (
           <OtherUserBubble
             key={message.id}
+            conversationId={conversationId}
+            messageId={message.id}
             text={message.text}
+            readStatus={message.readStatus}
             time={time}
             otherUser={otherUser}
+            updateMessage={updateMessage}
           />
         );
       })}

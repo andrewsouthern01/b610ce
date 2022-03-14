@@ -10,6 +10,22 @@ const Message = db.define("message", {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  readStatus: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
 });
+
+Message.findMessage = async function(conversationId, messageId, otherUser) {
+  const message = await Message.findOne({
+    where: {
+      conversationId,
+      id: messageId,
+      senderId: otherUser
+    }
+  })
+  return message
+}
 
 module.exports = Message;
